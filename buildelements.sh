@@ -34,7 +34,7 @@ echo "builddir: ${builddir}"
 # sudo rsync -aq --delete "${ELEMENTS_SRC}" "$GUIX_DIR"
 # sudo chown -R root:root "$GUIX_DIR"
 
-cat >/tmpelementsbuild.sh <<__EOF__
+cat >tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
 
 set -ex
@@ -70,8 +70,8 @@ fi
 find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
 __EOF__
 
-chmod 700 /tmpelementsbuild.sh
-docker cp /tmpelementsbuild.sh elementsbuild:/root
+chmod 700 tmpelementsbuild.sh
+docker cp tmpelementsbuild.sh elementsbuild:/root
 docker cp sources/. elementsbuild:/sources/
 docker exec -it elementsbuild /root/elementsbuild.sh
 mkdir -p out/

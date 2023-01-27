@@ -22,7 +22,7 @@ jobs:
     name: "build"
     runs-on: ubuntu-latest
     env:
-      build_tag: ${{ inputs.tag }}
+      BUILD_TAG: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v3.3.0
       - name: debug
