@@ -47,14 +47,14 @@ export BASE_CACHE=/base_cache
 HOSTS=""
 
 # if HOSTS is empty it builds all of these targets
-# HOSTS+=" aarch64-linux-gnu"
+HOSTS+=" aarch64-linux-gnu"
 # HOSTS+=" arm-linux-gnueabihf"
 # HOSTS+=" powerpc64le-linux-gnu"
 # HOSTS+=" powerpc64-linux-gnu"
 # HOSTS+=" riscv64-linux-gnu"
-# HOSTS+=" x86_64-apple-darwin18"
-# HOSTS+=" x86_64-linux-gnu"
-# HOSTS+=" x86_64-w64-mingw32"
+HOSTS+=" x86_64-apple-darwin18"
+HOSTS+=" x86_64-linux-gnu"
+HOSTS+=" x86_64-w64-mingw32"
 
 export HOSTS
 
