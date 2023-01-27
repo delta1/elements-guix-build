@@ -5,21 +5,22 @@
 ## cd core-review/guix/
 ## DOCKER_BUILDKIT=1 docker build --pull --no-cache -t alpine-guix - < Dockerfile
 
-export ELEMENTS_SRC="elements/"
-export GUIX_DIR="elementsguix/"
+export ELEMENTS_SRC="$PWD/elements/"
+# export GUIX_DIR="$PWD/elementsguix/"
+
 set -e
-mkdir -p $GUIX_DIR
+# mkdir -p "$GUIX_DIR"
 
 running=$(docker container list | grep elementsbuild || :)
 
 if [ -z "$running" ];then
     docker container stop elementsbuild || :
     docker container rm -f elementsbuild || :
-    docker run -dt --name elementsbuild --privileged -v $GUIX_DIR:/elements/ ghcr.io/delta1/alpine-guix
+    docker run -dt --name elementsbuild --privileged -v "$ELEMENTS_SRC":/elements/ ghcr.io/delta1/alpine-guix
 fi
 
 #if you build a hash instead of a tag, remember to use only the first 12 chars
-tag=$build_tag
+tag=$BUILD_TAG
 echo "tag: ${tag}"
 
 tagbuild=${tag#elements-}
@@ -29,9 +30,9 @@ builddir="guix-build-${tagbuild#v}"
 echo "builddir: ${builddir}"
 
 
-sudo mkdir -p $GUIX_DIR
-sudo rsync -aq --delete "${ELEMENTS_SRC}" $GUIX_DIR
-sudo chown -R root:root $GUIX_DIR
+# sudo mkdir -p "$GUIX_DIR"
+# sudo rsync -aq --delete "${ELEMENTS_SRC}" "$GUIX_DIR"
+# sudo chown -R root:root "$GUIX_DIR"
 
 cat >/tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
@@ -74,4 +75,4 @@ docker cp /tmpelementsbuild.sh elementsbuild:/root
 docker cp sources/. elementsbuild:/sources/
 docker exec -it elementsbuild /root/elementsbuild.sh
 mkdir -p out/
-docker cp elementsbuild:/elements/${builddir}/output/ out/
+docker cp elementsbuild:/elements/"$builddir"/output/ out/
