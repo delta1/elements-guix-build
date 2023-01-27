@@ -10,6 +10,7 @@ on:
     inputs:
       tag:
         description: "The tag or branch"
+        default: "elements-22.1"
         required: true
 
 jobs:
