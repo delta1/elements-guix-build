@@ -1,0 +1,32 @@
+# run on workflow
+# provide tag/branch
+# checkout this repo
+# clone elements
+
+name: "GUIX Build"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The tag or branch"
+        required: true
+
+jobs:
+  build:
+    name: "build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - name: debug
+        run: pwd
+      - name: "checkout elements"
+        uses: actions/checkout@v3.3.0
+        with:
+          repository: "ElementsProject/elements"
+          path: "elements"
+          ref: ${{ inputs.tag }}
+      - name: "build script"
+        environment:
+          build_tag: ${{ inputs.tag }}
+        run: ./buildelements.sh
