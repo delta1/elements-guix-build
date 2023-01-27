@@ -67,6 +67,7 @@ if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-he
     popd
 fi
 
+export FORCE_DIRTY_WORKTREE=true
 ./contrib/guix/guix-build
 find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
 __EOF__
