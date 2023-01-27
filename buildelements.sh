@@ -69,12 +69,12 @@ fi
 
 export FORCE_DIRTY_WORKTREE=true
 ./contrib/guix/guix-build
-find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
+find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee output/sha256sum.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
 docker cp tmpelementsbuild.sh elementsbuild:/root/elementsbuild.sh
 docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
-mkdir -p out/
-docker cp elementsbuild:/elements/"$builddir"/output/ out/
+mkdir -p output/
+docker cp elementsbuild:/elements/"$builddir"/output/ output/

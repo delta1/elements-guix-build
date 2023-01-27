@@ -46,5 +46,8 @@ jobs:
           password: ${{ secrets.READ_TOKEN }}
       - name: "build script"
         run: |
-          whoami
           ./buildelements.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: output
+          path: output/
