@@ -6,11 +6,14 @@
 name: "GUIX Build"
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       ref:
         description: "elements git ref"
-        default: "refs/heads/elements-22.1"
+        default: "refs/heads/elements-22.x"
         required: true
       tag:
         description: "the build tag"
@@ -22,7 +25,8 @@ jobs:
     name: "build"
     runs-on: ubuntu-latest
     env:
-      BUILD_TAG: ${{ inputs.tag }}
+      BUILD_TAG: elements-22.1
+      #${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v3.3.0
       - name: debug
@@ -32,7 +36,8 @@ jobs:
         with:
           repository: "ElementsProject/elements"
           path: "elements"
-          ref: ${{ inputs.ref }}
+          ref: refs/heads/elements-22.x
+          #${{ inputs.ref }}
       - name: gchr.io login
         uses: docker/login-action@v2
         with:
