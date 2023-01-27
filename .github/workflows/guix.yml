@@ -16,7 +16,7 @@ jobs:
   build:
     name: "build"
     runs-on: ubuntu-latest
-    environment:
+    env:
       build_tag: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v3.3.0
