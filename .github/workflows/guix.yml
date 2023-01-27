@@ -45,4 +45,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.READ_TOKEN }}
       - name: "build script"
-        run: ./buildelements.sh
+        run: |
+          whoami
+          ./buildelements.sh

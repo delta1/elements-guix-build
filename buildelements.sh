@@ -71,7 +71,7 @@ find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha2
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
-docker cp tmpelementsbuild.sh elementsbuild:/root
+docker cp tmpelementsbuild.sh elementsbuild:/root/elementsbuild.sh
 docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p out/
