@@ -73,6 +73,6 @@ __EOF__
 chmod 700 tmpelementsbuild.sh
 docker cp tmpelementsbuild.sh elementsbuild:/root
 docker cp sources/. elementsbuild:/sources/
-docker exec -it elementsbuild /root/elementsbuild.sh
+docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p out/
 docker cp elementsbuild:/elements/"$builddir"/output/ out/
