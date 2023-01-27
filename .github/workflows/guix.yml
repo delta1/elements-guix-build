@@ -8,8 +8,12 @@ name: "GUIX Build"
 on:
   workflow_dispatch:
     inputs:
+      ref:
+        description: "elements git ref"
+        default: "refs/heads/elements-22.1"
+        required: true
       tag:
-        description: "The tag or branch"
+        description: "the build tag"
         default: "elements-22.1"
         required: true
 
@@ -28,6 +32,6 @@ jobs:
         with:
           repository: "ElementsProject/elements"
           path: "elements"
-          ref: ${{ inputs.tag }}
+          ref: ${{ inputs.ref }}
       - name: "build script"
         run: ./buildelements.sh
