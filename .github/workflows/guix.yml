@@ -16,6 +16,8 @@ jobs:
   build:
     name: "build"
     runs-on: ubuntu-latest
+    environment:
+      build_tag: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v3.3.0
       - name: debug
@@ -27,6 +29,4 @@ jobs:
           path: "elements"
           ref: ${{ inputs.tag }}
       - name: "build script"
-        environment:
-          build_tag: ${{ inputs.tag }}
         run: ./buildelements.sh
