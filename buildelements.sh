@@ -32,14 +32,15 @@ echo "builddir: ${builddir}"
 
 # sudo mkdir -p "$GUIX_DIR"
 # sudo rsync -aq --delete "${ELEMENTS_SRC}" "$GUIX_DIR"
-# sudo chown -R root:root "$GUIX_DIR"
+# sudo chown -R root:root "$ELEMENTS_SRC"
 
 cat >tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
 
 set -ex
+chown -R root:root /elements
 cd /elements
-git checkout $tag
+# git checkout $tag
 export SOURCES_PATH=/sources
 export BASE_CACHE=/base_cache
 
