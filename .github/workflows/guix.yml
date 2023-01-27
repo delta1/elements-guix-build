@@ -33,5 +33,11 @@ jobs:
           repository: "ElementsProject/elements"
           path: "elements"
           ref: ${{ inputs.ref }}
+      - name: gchr.io login
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.READ_TOKEN }}
       - name: "build script"
         run: ./buildelements.sh
