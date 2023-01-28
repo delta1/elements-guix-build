@@ -24,8 +24,21 @@ jobs:
   build:
     name: "build"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        host: [
+          "aarch64-linux-gnu",
+          "arm-linux-gnueabihf",
+          "powerpc64le-linux-gnu",
+          "powerpc64-linux-gnu",
+          "riscv64-linux-gnu",
+          "x86_64-apple-darwin18",
+          "x86_64-linux-gnu",
+          "x86_64-w64-mingw32"
+        ]
     env:
       BUILD_TAG: elements-22.1
+      HOST: ${{ matrix.host }}
       #${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v3.3.0

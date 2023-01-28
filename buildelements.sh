@@ -6,10 +6,8 @@
 ## DOCKER_BUILDKIT=1 docker build --pull --no-cache -t alpine-guix - < Dockerfile
 
 export ELEMENTS_SRC="$PWD/elements/"
-# export GUIX_DIR="$PWD/elementsguix/"
 
 set -e
-# mkdir -p "$GUIX_DIR"
 
 running=$(docker container list | grep elementsbuild || :)
 
@@ -29,10 +27,8 @@ echo "tagbuild: ${tagbuild}"
 builddir="guix-build-${tagbuild#v}"
 echo "builddir: ${builddir}"
 
+echo "host: $HOST"
 
-# sudo mkdir -p "$GUIX_DIR"
-# sudo rsync -aq --delete "${ELEMENTS_SRC}" "$GUIX_DIR"
-# sudo chown -R root:root "$ELEMENTS_SRC"
 
 cat >tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
@@ -44,19 +40,8 @@ cd /elements
 export SOURCES_PATH=/sources
 export BASE_CACHE=/base_cache
 
-HOSTS=""
-
-# if HOSTS is empty it builds all of these targets
-HOSTS+=" aarch64-linux-gnu"
-# HOSTS+=" arm-linux-gnueabihf"
-# HOSTS+=" powerpc64le-linux-gnu"
-# HOSTS+=" powerpc64-linux-gnu"
-# HOSTS+=" riscv64-linux-gnu"
-HOSTS+=" x86_64-apple-darwin18"
-HOSTS+=" x86_64-linux-gnu"
-HOSTS+=" x86_64-w64-mingw32"
-
-export HOSTS
+export HOSTS="$HOST"
+echo $HOSTS
 
 ./contrib/guix/guix-clean
 
