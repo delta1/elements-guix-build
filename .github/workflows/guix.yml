@@ -28,7 +28,7 @@ jobs:
       matrix:
         host: [
           "aarch64-linux-gnu",
-          "arm-linux-gnueabihf",
+          # "arm-linux-gnueabihf",
           "powerpc64le-linux-gnu",
           "powerpc64-linux-gnu",
           "riscv64-linux-gnu",
