@@ -54,7 +54,12 @@ fi
 
 export FORCE_DIRTY_WORKTREE=true
 ./contrib/guix/guix-build
-find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee output/sha256sum.txt
+ls -alht $builddir
+ls -alht $builddir/output/
+find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
+FILES=$(find "$builddir"/output/ -type f -print0)
+echo \$FILES
+echo \$FILES | env LC_ALL=C sort -z | xargs -r0 sha256sum > $builddir/output/sha256sum.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh

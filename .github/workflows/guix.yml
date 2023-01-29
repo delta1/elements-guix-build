@@ -25,10 +25,11 @@ jobs:
     name: "build"
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         host: [
           "aarch64-linux-gnu",
-          # "arm-linux-gnueabihf",
+          "arm-linux-gnueabihf",
           "powerpc64le-linux-gnu",
           "powerpc64-linux-gnu",
           "riscv64-linux-gnu",
