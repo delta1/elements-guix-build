@@ -53,16 +53,13 @@ if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-he
 fi
 
 export FORCE_DIRTY_WORKTREE=true
-./contrib/guix/guix-build
+time ./contrib/guix/guix-build
 pwd
 ls -alht
 echo $builddir
 ls -alht $builddir
 ls -alht $builddir/output/
-find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
-FILES=$(find "$builddir"/output/ -type f -print0)
-echo \$FILES
-echo \$FILES | env LC_ALL=C sort -z | xargs -r0 sha256sum > $builddir/output/sha256sum.txt
+find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $builddir/output/sha256sum.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
