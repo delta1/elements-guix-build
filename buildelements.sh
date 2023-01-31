@@ -41,7 +41,7 @@ export SOURCES_PATH=/sources
 export BASE_CACHE=/base_cache
 
 export HOSTS="$HOST"
-echo $HOSTS
+echo $HOST
 
 ./contrib/guix/guix-clean
 
@@ -54,6 +54,9 @@ fi
 
 export FORCE_DIRTY_WORKTREE=true
 ./contrib/guix/guix-build
+pwd
+ls -alht
+echo $builddir
 ls -alht $builddir
 ls -alht $builddir/output/
 find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
