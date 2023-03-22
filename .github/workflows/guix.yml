@@ -1,9 +1,9 @@
 name: "GUIX Build"
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
     inputs:
       repo:
@@ -28,13 +28,13 @@ jobs:
       matrix:
         host: [
           aarch64-linux-gnu,
-          # arm-linux-gnueabihf,
-          # powerpc64le-linux-gnu,
-          # powerpc64-linux-gnu,
-          # riscv64-linux-gnu,
+          arm-linux-gnueabihf,
+          powerpc64le-linux-gnu,
+          powerpc64-linux-gnu,
+          riscv64-linux-gnu,
           x86_64-apple-darwin18,
-          # x86_64-linux-gnu,
-          # x86_64-w64-mingw32,
+          x86_64-linux-gnu,
+          x86_64-w64-mingw32,
         ]
     env:
       BUILD_TAG: elements-22.1.1-rc2
@@ -75,10 +75,8 @@ jobs:
           name: output
       - name: script
         run: |
-          ls -alht
-          ls -alht output
-          find output/ -type f -name "*.txt" -print0 | env LC_ALL=C sort -z | xargs -r0 cat | tee sha256sum.txt
+          find output/ -type f -name "*.txt" -print0 | uniq | env LC_ALL=C sort -z | xargs -r0 cat | tee sha256sums.txt
       - uses: actions/upload-artifact@v3
         with:
-          name: sha256sum.txt
-          path: sha256sum.txt
+          name: sha256sums.txt
+          path: sha256sums.txt
