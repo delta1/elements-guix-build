@@ -77,6 +77,7 @@ SUM=$(find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum)
 echo "here"
 echo $SUM
 echo "done"
-echo "SUM<<EOF" >> $GITHUB_ENV
-echo $SUM >> $GITHUB_ENV
-echo "EOF" >> $GITHUB_ENV
+
+echo "$NAME<<EOF" >> $GITHUB_OUTPUT
+echo $SUM >> $GITHUB_OUTPUT
+echo "EOF" >> $GITHUB_OUTPUT

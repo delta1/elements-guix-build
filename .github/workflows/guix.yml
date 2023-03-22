@@ -74,5 +74,12 @@ jobs:
       - name: temp
         run: |
           echo "here"
-          echo ${{ env.SUM }}
+          echo ${{ steps.build.outputs.aarch64linuxgnu }}
+          echo ${{ steps.build.outputs.armlinuxgnueabihf }}
+          echo ${{ steps.build.outputs.powerpc64lelinuxgnu }}
+          echo ${{ steps.build.outputs.powerpc64linuxgnu }}
+          echo ${{ steps.build.outputs.riscv64linuxgnu }}
+          echo ${{ steps.build.outputs.x86_64appledarwin18 }}
+          echo ${{ steps.build.outputs.x86_64linuxgnu }}
+          echo ${{ steps.build.outputs.x86_64w64mingw32 }}
           echo "there"
