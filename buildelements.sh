@@ -28,17 +28,18 @@ builddir="guix-build-${tagbuild#v}"
 echo "builddir: ${builddir}"
 
 echo "host: $HOST"
+echo "name: $NAME"
 
 
 cat >tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
 
 set -ex
-# chown -R root:root /elements
-# cd /elements
+chown -R root:root /elements
+cd /elements
 # # git checkout $tag
-# export SOURCES_PATH=/sources
-# export BASE_CACHE=/base_cache
+export SOURCES_PATH=/sources
+export BASE_CACHE=/base_cache
 
 export HOSTS="$HOST"
 echo $HOST
@@ -61,9 +62,9 @@ echo $NAME
 # ls -alht $builddir
 # ls -alht $builddir/output/
 # find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
-mkdir -p $builddir/output/
-echo $HOST > $builddir/output/$HOST.txt
-sha256sum $builddir/output/$HOST.txt
+mkdir -p /elements/$builddir/output/
+echo $HOST > /elements/$builddir/output/$HOST.txt
+sha256sum /elements/$builddir/output/$HOST.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
