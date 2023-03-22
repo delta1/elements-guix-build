@@ -65,6 +65,8 @@ echo $NAME
 mkdir -p /elements/$builddir/output/
 echo $HOST > /elements/$builddir/output/$HOST.txt
 sha256sum /elements/$builddir/output/$HOST.txt
+echo temp > /elements/$builddir/output/temp.txt
+sha256sum /elements/$builddir/output/temp.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
