@@ -77,6 +77,4 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
-cat output/$NAME.txt
-# find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
-# mv $NAME.txt output/
+find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 cat
