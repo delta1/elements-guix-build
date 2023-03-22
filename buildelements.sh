@@ -46,27 +46,22 @@ export HOSTS="$HOST"
 echo $HOST
 echo $NAME
 
-# ./contrib/guix/guix-clean
+./contrib/guix/guix-clean
 
-# if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers ];then
-#     mkdir -p /elements/depends/SDKs/
-#     pushd /elements/depends/SDKs/
-#     tar -xf /sources/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers.tar.gz
-#     popd
-# fi
+if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers ];then
+    mkdir -p /elements/depends/SDKs/
+    pushd /elements/depends/SDKs/
+    tar -xf /sources/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers.tar.gz
+    popd
+fi
 
-# export FORCE_DIRTY_WORKTREE=true
-# time ./contrib/guix/guix-build
-# pwd
-# ls -alht
-# echo $builddir
-# ls -alht $builddir
-# ls -alht $builddir/output/
-# find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
-
-mkdir -p /elements/$builddir/output/
-echo $HOST > /elements/$builddir/output/$HOST.txt
-sha256sum /elements/$builddir/output/$HOST.txt
+export FORCE_DIRTY_WORKTREE=true
+time ./contrib/guix/guix-build
+pwd
+ls -alht
+echo $builddir
+ls -alht $builddir
+ls -alht $builddir/output/
 find /elements/$builddir/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
 mv $NAME.txt /elements/$builddir/output/$NAME.txt
 __EOF__
@@ -77,4 +72,4 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
-find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 cat
+find output/ -type f -print0 -name "*.txt" | env LC_ALL=C sort -z | xargs -r0 cat
