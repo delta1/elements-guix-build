@@ -63,11 +63,12 @@ echo $NAME
 # ls -alht $builddir
 # ls -alht $builddir/output/
 # find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
+
 mkdir -p /elements/$builddir/output/
 echo $HOST > /elements/$builddir/output/$HOST.txt
 sha256sum /elements/$builddir/output/$HOST.txt
-echo temp > /elements/$builddir/output/temp.txt
-sha256sum /elements/$builddir/output/temp.txt
+find /elements/$builddir/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
+mv $NAME.txt /elements/$builddir/output/$NAME.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
@@ -76,5 +77,6 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
-find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
-mv $NAME.txt output/
+cat output/$NAME.txt
+# find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
+# mv $NAME.txt output/

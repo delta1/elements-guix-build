@@ -78,7 +78,12 @@ jobs:
           ls -alht
           ls -alht output
           find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 cat | tee sha256sum.txt
+          find output/ -type f -print0 | env LC_ALL=C sort -z | cat | tee temp.txt
       - uses: actions/upload-artifact@v3
         with:
           name: sha256sum.txt
           path: sha256sum.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: temp.txt
+          path: temp.txt
