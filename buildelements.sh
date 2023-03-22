@@ -73,7 +73,7 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
-SUM=$(find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum)
+SUM=$(find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum)
 echo "here"
 echo $SUM
 echo "done"
