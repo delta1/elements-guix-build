@@ -34,32 +34,36 @@ cat >tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
 
 set -ex
-chown -R root:root /elements
-cd /elements
-# git checkout $tag
-export SOURCES_PATH=/sources
-export BASE_CACHE=/base_cache
+# chown -R root:root /elements
+# cd /elements
+# # git checkout $tag
+# export SOURCES_PATH=/sources
+# export BASE_CACHE=/base_cache
 
 export HOSTS="$HOST"
 echo $HOST
+echo $NAME
 
-./contrib/guix/guix-clean
+# ./contrib/guix/guix-clean
 
-if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers ];then
-    mkdir -p /elements/depends/SDKs/
-    pushd /elements/depends/SDKs/
-    tar -xf /sources/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers.tar.gz
-    popd
-fi
+# if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers ];then
+#     mkdir -p /elements/depends/SDKs/
+#     pushd /elements/depends/SDKs/
+#     tar -xf /sources/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers.tar.gz
+#     popd
+# fi
 
-export FORCE_DIRTY_WORKTREE=true
-time ./contrib/guix/guix-build
-pwd
-ls -alht
-echo $builddir
-ls -alht $builddir
-ls -alht $builddir/output/
-find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $builddir/output/sha256sum.txt
+# export FORCE_DIRTY_WORKTREE=true
+# time ./contrib/guix/guix-build
+# pwd
+# ls -alht
+# echo $builddir
+# ls -alht $builddir
+# ls -alht $builddir/output/
+# find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum
+mkdir -p $builddir/output/
+echo $HOST > $builddir/output/$HOST.txt
+sha256sum $builddir/output/$HOST.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh
@@ -68,3 +72,10 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
+SUM=$(find ${builddir}/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum)
+echo "here"
+echo $SUM
+echo "done"
+echo "SUM<<EOF" >> $GITHUB_ENV
+echo $SUM >> $GITHUB_ENV
+echo "EOF" >> $GITHUB_ENV
