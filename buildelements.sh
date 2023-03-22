@@ -28,6 +28,7 @@ builddir="guix-build-${tagbuild#v}"
 echo "builddir: ${builddir}"
 
 echo "host: $HOST"
+NAME=${HOST//-/_}
 echo "name: $NAME"
 
 
@@ -75,11 +76,5 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
-SUM=$(find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum)
-echo "here"
-echo $SUM
-echo "done"
-
-echo "$NAME<<EOF" >> $GITHUB_OUTPUT
-echo $SUM >> $GITHUB_OUTPUT
-echo "EOF" >> $GITHUB_OUTPUT
+find output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
+mv $NAME.txt output/
