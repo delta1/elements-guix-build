@@ -12,11 +12,11 @@ on:
         required: true
       ref:
         description: "elements git ref"
-        default: "refs/tags/elements-22.1.1-rc2"
+        default: "refs/tags/elements-22.1.1"
         required: true
       tag:
         description: "the build tag"
-        default: "elements-22.1.1-rc2"
+        default: "elements-22.1.1"
         required: true
 
 jobs:
@@ -37,8 +37,7 @@ jobs:
           x86_64-w64-mingw32,
         ]
     env:
-      BUILD_TAG: elements-22.1.1-rc2
-      #${{ inputs.tag }}
+      BUILD_TAG: ${{ inputs.tag }}
       HOST: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@v3.3.0
@@ -47,11 +46,9 @@ jobs:
       - name: "checkout elements"
         uses: actions/checkout@v3.3.0
         with:
-          repository: "delta1/elements"
-          #${{ inputs.repo }}
+          repository: ${{ inputs.repo }}
           path: "elements"
-          ref: refs/tags/elements-22.1.1-rc2
-          #${{ inputs.ref }}
+          ref: ${{ inputs.ref }}
       - name: gchr.io login
         uses: docker/login-action@v2
         with:
