@@ -72,4 +72,3 @@ docker cp sources/. elementsbuild:/sources/
 docker exec -i elementsbuild /root/elementsbuild.sh
 mkdir -p output/
 docker cp elementsbuild:/elements/"$builddir"/output/ output/
-find output/ -type f -print0 -name "*.txt" | env LC_ALL=C sort -z | xargs -r0 cat
