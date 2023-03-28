@@ -76,6 +76,7 @@ jobs:
     needs: build
     env:
       BUILD_TAG: ${{ inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/download-artifact@v3
         with:
