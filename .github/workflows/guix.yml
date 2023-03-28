@@ -78,6 +78,7 @@ jobs:
       BUILD_TAG: ${{ inputs.tag }}
       GH_TOKEN: ${{ github.token }}
     steps:
+      - uses: actions/checkout@v3.3.0
       - uses: actions/download-artifact@v3
         with:
           name: output
