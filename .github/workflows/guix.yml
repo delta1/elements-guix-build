@@ -90,7 +90,8 @@ jobs:
           mkdir -p output
           find output/ -type f -name "*.txt" | xargs cat | awk '!x[$0]++' | tee sha256sums.txt
           mkdir -p release
-          touch output/temp.tar.gz
+          echo asdf > output/temp
+          tar -avcf output/temp.tar.gz output/temp
           find output/ -type f -iregex ".*.\(gz\|zip\|exe\|dmg\)" -exec mv -t release {} +
           cp sha256sums.txt release
           gh release create "$BUILD_TAG" --title "$BUILD_TAG" --notes-file sha256sums.txt release/*
