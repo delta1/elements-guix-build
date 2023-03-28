@@ -80,6 +80,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: output
+          path: output
       - name: script
         run: |
           pwd
