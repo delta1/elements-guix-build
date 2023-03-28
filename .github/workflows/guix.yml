@@ -82,6 +82,9 @@ jobs:
           name: output
       - name: script
         run: |
+          pwd
+          ls -alht
+          mkdir -p output
           find output/ -type f -name "*.txt" | xargs cat | awk '!x[$0]++' | tee sha256sums.txt
           mkdir -p release
           touch output/temp.tar.gz
