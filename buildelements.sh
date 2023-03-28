@@ -62,8 +62,8 @@ ls -alht
 echo $builddir
 ls -alht $builddir
 ls -alht $builddir/output/
-find /elements/$builddir/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
-mv $NAME.txt /elements/$builddir/output/$NAME.txt
+find $builddir/output/ -type f -print0 | env LC_ALL=C sort -z | xargs -r0 sha256sum | tee $NAME.txt
+mv $NAME.txt $builddir/output/$NAME.txt
 __EOF__
 
 chmod 700 tmpelementsbuild.sh

@@ -86,7 +86,8 @@ jobs:
           mkdir -p release
           find output/ -type f -iregex ".*.\(gz\|zip\|exe\|dmg\)" -exec mv -t release {} +
           cp sha256sums.txt release
-          gh release create "$BUILD_TAG" --title "$BUILD_TAG" --notes-file sha256sums.txt release/*
+          echo -e "\`\`\`\n$(cat sha256sums.txt)\n\`\`\`" > notes
+          gh release create "$BUILD_TAG" --title "$BUILD_TAG" --notes-file notes release/*
       - uses: actions/upload-artifact@v3
         with:
           name: sha256sums.txt
