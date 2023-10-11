@@ -31,6 +31,8 @@ echo "host: $HOST"
 NAME=${HOST//-/_}
 echo "name: $NAME"
 
+echo "macos sdk: $MACOS_SDK"
+
 
 cat >tmpelementsbuild.sh <<__EOF__
 #!/bin/bash
@@ -48,10 +50,11 @@ echo $NAME
 
 ./contrib/guix/guix-clean
 
-if [ ! -d /elements/depends/SDKs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers ];then
+if [ ! -d /elements/depends/SDKs/$MACOS_SDK ];then
     mkdir -p /elements/depends/SDKs/
     pushd /elements/depends/SDKs/
-    tar -xf /sources/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers.tar.gz
+    wget https://bitcoincore.org/depends-sources/sdks/$MACOS_SDK.tar.gz
+    tar -xf /sources/$MACOS_SDK.tar.gz
     popd
 fi
 

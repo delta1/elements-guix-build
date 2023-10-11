@@ -37,6 +37,7 @@ jobs:
           x86_64-w64-mingw32,
         ]
     env:
+      MACOS_SDK: Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers
       BUILD_TAG: ${{ inputs.tag }}
       HOST: ${{ matrix.host }}
     steps:
