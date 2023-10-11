@@ -4,7 +4,7 @@ This repo uses Github Actions to run the Guix builds for an [Elements](/Elements
 
 ## Prerequisites 
 
-- [alpine-guix](https://github.com/fanquake/core-review/blob/master/guix/README.md#create-the-alpine-guix-image) docker image. This repo is currently hardcoded to use the image pushed to ghcr.io/delta1/alpine-guix
+- [alpine-guix](https://github.com/fanquake/core-review/blob/master/guix/README.md#create-the-alpine-guix-image) docker image. This repo is currently hardcoded to use the image pushed to `ghcr.io/delta1/alpine-guix`
 - a "Repository secret" in [settings/secrets/actions](settings/secrets/actions) named `READ_TOKEN` with the value of a [github token](/settings/tokens) with the permission to `read:packages` for the alpine-guix docker image 
 
 ## Usage 
