@@ -50,12 +50,14 @@ echo $NAME
 
 ./contrib/guix/guix-clean
 
-if [ ! -d /elements/depends/SDKs/$MACOS_SDK ];then
-    mkdir -p /elements/depends/SDKs/
-    pushd /elements/depends/SDKs/
-    wget https://bitcoincore.org/depends-sources/sdks/$MACOS_SDK.tar.gz
-    tar -xf /sources/$MACOS_SDK.tar.gz
-    popd
+if [[ $HOST == *"apple"* ]];then
+    if [ ! -d /elements/depends/SDKs/$MACOS_SDK ];then
+        mkdir -p /elements/depends/SDKs/
+        pushd /elements/depends/SDKs/
+        wget https://bitcoincore.org/depends-sources/sdks/$MACOS_SDK.tar.gz
+        tar -xf /sources/$MACOS_SDK.tar.gz
+        popd
+    fi
 fi
 
 export FORCE_DIRTY_WORKTREE=true
