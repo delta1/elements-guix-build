@@ -1,3 +1,5 @@
+[![Guix Build](https://github.com/delta1/elements-guix-build/actions/workflows/guix.yml/badge.svg?event=workflow_dispatch)](https://github.com/delta1/elements-guix-build/actions/workflows/guix.yml)
+
 # Elements Guix Builds 
 
 This repo uses Github Actions to run the Guix builds for an [Elements](/ElementsProject/elements) release. 
