@@ -1,4 +1,4 @@
-[![Guix Build](https://github.com/delta1/elements-guix-build/actions/workflows/guix.yml/badge.svg?event=workflow_dispatch)](https://github.com/delta1/elements-guix-build/actions/workflows/guix.yml)
+[![Guix Build](https://github.com/delta1/elements-guix-build/actions/workflows/guix.yml/badge.svg)](https://github.com/delta1/elements-guix-build/actions/workflows/guix.yml)
 
 # Elements Guix Builds 
 
