@@ -12,11 +12,11 @@ on:
         required: true
       ref:
         description: "elements git ref"
-        default: "refs/tags/elements-23.2.1"
+        default: "refs/tags/elements-23.2.2"
         required: true
       tag:
         description: "the build tag"
-        default: "elements-23.2.1"
+        default: "elements-23.2.2"
         required: true
 
 jobs:
@@ -42,19 +42,19 @@ jobs:
       BUILD_TAG: ${{ inputs.tag }}
       HOST: ${{ matrix.host }}
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v4
       - name: debug
         run: |
           pwd
           whoami
       - name: "checkout elements"
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repo }}
           path: "elements"
           ref: ${{ inputs.ref }}
       - name: gchr.io login
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -62,7 +62,7 @@ jobs:
       - name: "build script"
         run: |
           ./buildelements.sh
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: output
           path: output/
@@ -78,8 +78,8 @@ jobs:
       BUILD_TAG: ${{ inputs.tag }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3.3.0
-      - uses: actions/download-artifact@v3
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           name: output
       - name: script
@@ -90,7 +90,7 @@ jobs:
           cp sha256sums.txt release
           echo -e "\`\`\`\n$(cat sha256sums.txt)\n\`\`\`" > notes
           gh release create "$BUILD_TAG" --title "$BUILD_TAG" --notes-file notes release/*
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: sha256sums.txt
           path: sha256sums.txt
