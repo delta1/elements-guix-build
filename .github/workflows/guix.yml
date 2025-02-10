@@ -68,7 +68,7 @@ jobs:
           tree output/output
       - uses: actions/upload-artifact@v4
         with:
-          name: output
+          name: ${{ matrix.host }}
           path: output/
       - name: cleanup
         run: |
@@ -85,7 +85,8 @@ jobs:
       - uses: actions/checkout@v3.3.0
       - uses: actions/download-artifact@v4
         with:
-          name: output
+          path: output
+          merge-multiple: true
       - name: script
         run: |
           find output/ -type f -name "*.txt" | xargs cat | awk '!x[$0]++' | tee sha256sums.txt
@@ -94,7 +95,7 @@ jobs:
           cp sha256sums.txt release
           echo -e "\`\`\`\n$(cat sha256sums.txt)\n\`\`\`" > notes
           gh release create "$BUILD_TAG" --title "$BUILD_TAG" --notes-file notes release/*
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: sha256sums.txt
           path: sha256sums.txt
