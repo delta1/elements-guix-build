@@ -62,7 +62,10 @@ jobs:
       - name: "build script"
         run: |
           ./buildelements.sh
-      - uses: actions/upload-artifact@v3
+      - name: debug
+        run: |
+          ls -alh output/
+      - uses: actions/upload-artifact@v4
         with:
           name: output
           path: output/
@@ -79,7 +82,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: output
       - name: script
