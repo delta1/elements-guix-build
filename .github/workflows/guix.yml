@@ -64,7 +64,8 @@ jobs:
           ./buildelements.sh
       - name: debug
         run: |
-          ls -alh output/
+          ls -alh output/output
+          tree output/output
       - uses: actions/upload-artifact@v4
         with:
           name: output
