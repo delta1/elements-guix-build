@@ -48,6 +48,8 @@ export HOSTS="$HOST"
 echo $HOST
 echo $NAME
 
+sed -i 's|https://codeberg.org/guix.git|https://codeberg.org/guix/guix.git|g' contrib/guix/guix-build contrib/guix/guix-codesign
+
 ./contrib/guix/guix-clean
 
 if [[ $HOST == *"apple"* ]];then
