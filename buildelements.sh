@@ -25,6 +25,13 @@ SOURCES_DIR="${SOURCES_DIR:-$PWD/cache/sources}"
 BASE_CACHE_DIR="${BASE_CACHE_DIR:-$PWD/cache/base_cache-$HOST}"
 mkdir -p "$SOURCES_DIR" "$BASE_CACHE_DIR"
 
+# depends' download step runs as root in the outer elementsbuild container, but
+# depends' build/cache step runs as one of guix's unprivileged guixbuilderNN
+# users inside guix's own nested --container build environment. That uid won't
+# match the host runner's uid that owns these bind-mounted dirs, so they must
+# be world-writable or the build-user's `mkdir`/cache writes fail with EACCES.
+chmod -R 777 "$SOURCES_DIR" "$BASE_CACHE_DIR"
+
 GUIX_STORE_MOUNTS=()
 if [ "${CACHE_GUIX_STORE:-false}" = "true" ]; then
     GUIX_STORE_DIR="${GUIX_STORE_DIR:-$PWD/cache/gnu-store}"
@@ -120,6 +127,12 @@ fi
 
 export FORCE_DIRTY_WORKTREE=true
 time ./contrib/guix/guix-build
+# Re-open permissions on the cache mounts after the build: guix's nested build
+# container writes new sources/base_cache entries as one of the guixbuilderNN
+# users (uid varies run to run), and this step runs as root in the outer
+# elementsbuild container, so it can freely restore world read/write/traverse
+# access for whichever builder uid picks these dirs up on the next run.
+chmod -R a+rwX /sources /base_cache
 pwd
 ls -alht
 echo $builddir
