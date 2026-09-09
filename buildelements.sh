@@ -9,12 +9,59 @@ export ELEMENTS_SRC="$PWD/elements/"
 
 set -e
 
+# Host-side cache directories, bind-mounted into the build container so their
+# contents persist across CI runs (via actions/cache in the workflow) instead
+# of being downloaded/rebuilt from scratch every time.
+#
+#   SOURCES_DIR      -> /sources     depends download cache (SOURCES_PATH) +
+#                                     misc pre-fetched sources (e.g. macOS SDK)
+#   BASE_CACHE_DIR   -> /base_cache  depends build cache (BASE_CACHE), per-host
+#
+# The guix store/database (/gnu/store, /var/guix) is only cached for a single
+# host (selected by the workflow via CACHE_GUIX_STORE=true) to stay within
+# GitHub Actions' 10GiB per-repo cache limit, since the full guix substitute
+# closure would otherwise be duplicated per matrix host.
+SOURCES_DIR="${SOURCES_DIR:-$PWD/cache/sources}"
+BASE_CACHE_DIR="${BASE_CACHE_DIR:-$PWD/cache/base_cache-$HOST}"
+mkdir -p "$SOURCES_DIR" "$BASE_CACHE_DIR"
+
+GUIX_STORE_MOUNTS=()
+if [ "${CACHE_GUIX_STORE:-false}" = "true" ]; then
+    GUIX_STORE_DIR="${GUIX_STORE_DIR:-$PWD/cache/gnu-store}"
+    GUIX_VAR_DIR="${GUIX_VAR_DIR:-$PWD/cache/var-guix}"
+    mkdir -p "$GUIX_STORE_DIR" "$GUIX_VAR_DIR"
+
+    # The alpine-guix image ships with a pre-populated /gnu/store and /var/guix
+    # (the extracted guix binary install, including the guix-daemon database and
+    # the ~root/.config/guix/current profile symlink target). If we bind-mount
+    # empty (cache-miss) host directories straight over those paths, that baked-in
+    # install is hidden and the `guix` command breaks entirely. So on a cache miss,
+    # seed the host cache dirs from the image first via `docker cp` (no container
+    # start needed), then bind-mount over them as usual; a successful build will
+    # grow these dirs with the real substitute closure for actions/cache to persist.
+    if [ -z "$(ls -A "$GUIX_VAR_DIR" 2>/dev/null)" ] || [ -z "$(ls -A "$GUIX_STORE_DIR" 2>/dev/null)" ]; then
+        echo "guix store cache is empty, seeding from ghcr.io/delta1/alpine-guix image..."
+        docker rm -f elementsbuild-seed >/dev/null 2>&1 || :
+        docker create --name elementsbuild-seed ghcr.io/delta1/alpine-guix >/dev/null
+        docker cp elementsbuild-seed:/gnu/store/. "$GUIX_STORE_DIR"/
+        docker cp elementsbuild-seed:/var/guix/. "$GUIX_VAR_DIR"/
+        docker rm -f elementsbuild-seed >/dev/null
+    fi
+
+    GUIX_STORE_MOUNTS=(-v "$GUIX_STORE_DIR":/gnu/store -v "$GUIX_VAR_DIR":/var/guix)
+fi
+
 running=$(docker container list | grep elementsbuild || :)
 
 if [ -z "$running" ];then
     docker container stop elementsbuild || :
     docker container rm -f elementsbuild || :
-    docker run -dt --name elementsbuild --privileged -v "$ELEMENTS_SRC":/elements/ ghcr.io/delta1/alpine-guix
+    docker run -dt --name elementsbuild --privileged \
+        -v "$ELEMENTS_SRC":/elements/ \
+        -v "$SOURCES_DIR":/sources/ \
+        -v "$BASE_CACHE_DIR":/base_cache/ \
+        "${GUIX_STORE_MOUNTS[@]}" \
+        ghcr.io/delta1/alpine-guix
 fi
 
 #if you build a hash instead of a tag, remember to use only the first 12 chars
@@ -56,7 +103,9 @@ if [[ $HOST == *"apple"* ]];then
     if [ ! -d /elements/depends/SDKs/$MACOS_SDK ];then
         mkdir -p /elements/depends/SDKs/
         pushd /elements/depends/SDKs/
-        wget https://bitcoincore.org/depends-sources/sdks/$MACOS_SDK.tar.gz
+        # NOTE: the SDK tarball is already made available at /sources/$MACOS_SDK.tar.gz
+        # (copied in from the host's ./sources dir below), so it does not need to be
+        # re-downloaded here.
         tar -xf /sources/$MACOS_SDK.tar.gz
         popd
     fi

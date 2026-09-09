@@ -41,6 +41,15 @@ jobs:
       MACOS_SDK: Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers
       BUILD_TAG: ${{ inputs.tag }}
       HOST: ${{ matrix.host }}
+      # Bind-mount targets used by buildelements.sh; cached below via actions/cache
+      # so downloads/builds are reused across runs instead of starting from scratch.
+      SOURCES_DIR: ${{ github.workspace }}/cache/sources
+      BASE_CACHE_DIR: ${{ github.workspace }}/cache/base_cache-${{ matrix.host }}
+      GUIX_STORE_DIR: ${{ github.workspace }}/cache/gnu-store
+      GUIX_VAR_DIR: ${{ github.workspace }}/cache/var-guix
+      # The full guix substitute closure is identical across hosts, so only cache
+      # it once (for the native host) to stay under the per-repo cache size limit.
+      CACHE_GUIX_STORE: ${{ matrix.host == 'x86_64-linux-gnu' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v3.3.0
       - name: debug
@@ -59,6 +68,30 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.READ_TOKEN }}
+      - name: "cache: depends sources"
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.SOURCES_DIR }}
+          key: depends-sources-${{ hashFiles('elements/depends/packages/*.mk') }}
+          restore-keys: |
+            depends-sources-
+      - name: "cache: depends base_cache"
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.BASE_CACHE_DIR }}
+          key: depends-base-${{ matrix.host }}-${{ hashFiles('elements/depends/packages/*.mk') }}
+          restore-keys: |
+            depends-base-${{ matrix.host }}-
+      - name: "cache: guix store (native host only)"
+        if: matrix.host == 'x86_64-linux-gnu'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GUIX_STORE_DIR }}
+            ${{ env.GUIX_VAR_DIR }}
+          key: guix-store-${{ hashFiles('elements/contrib/guix/guix-build', 'elements/contrib/guix/manifest.scm', 'elements/contrib/guix/libexec/**') }}
+          restore-keys: |
+            guix-store-
       - name: "build script"
         run: |
           ./buildelements.sh
