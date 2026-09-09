@@ -36,16 +36,23 @@ if [ "${CACHE_GUIX_STORE:-false}" = "true" ]; then
     # the ~root/.config/guix/current profile symlink target). If we bind-mount
     # empty (cache-miss) host directories straight over those paths, that baked-in
     # install is hidden and the `guix` command breaks entirely. So on a cache miss,
-    # seed the host cache dirs from the image first via `docker cp` (no container
-    # start needed), then bind-mount over them as usual; a successful build will
-    # grow these dirs with the real substitute closure for actions/cache to persist.
+    # seed the host cache dirs from the image first, then bind-mount over them as
+    # usual; a successful build will grow these dirs with the real substitute
+    # closure for actions/cache to persist.
+    #
+    # NB: this must be done with `docker run ... cp -a` (a real copy performed by
+    # root *inside* the container), not `docker cp` (container -> host). `docker
+    # cp` extracts client-side as the unprivileged host runner user, and guix
+    # store entries are intentionally read-only directories/files (e.g. dr-xr-xr-x),
+    # so the client can't create files underneath them once extracted -> EACCES.
+    # Copying as root inside the container has no such problem.
     if [ -z "$(ls -A "$GUIX_VAR_DIR" 2>/dev/null)" ] || [ -z "$(ls -A "$GUIX_STORE_DIR" 2>/dev/null)" ]; then
         echo "guix store cache is empty, seeding from ghcr.io/delta1/alpine-guix image..."
-        docker rm -f elementsbuild-seed >/dev/null 2>&1 || :
-        docker create --name elementsbuild-seed ghcr.io/delta1/alpine-guix >/dev/null
-        docker cp elementsbuild-seed:/gnu/store/. "$GUIX_STORE_DIR"/
-        docker cp elementsbuild-seed:/var/guix/. "$GUIX_VAR_DIR"/
-        docker rm -f elementsbuild-seed >/dev/null
+        docker run --rm \
+            -v "$GUIX_STORE_DIR":/host-store \
+            -v "$GUIX_VAR_DIR":/host-var \
+            ghcr.io/delta1/alpine-guix \
+            sh -c 'cp -a /gnu/store/. /host-store/ && cp -a /var/guix/. /host-var/'
     fi
 
     GUIX_STORE_MOUNTS=(-v "$GUIX_STORE_DIR":/gnu/store -v "$GUIX_VAR_DIR":/var/guix)
